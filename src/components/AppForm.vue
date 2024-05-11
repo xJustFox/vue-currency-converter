@@ -1,8 +1,9 @@
 <script>
 export default {
-    name: 'AppForm';
+    name: 'AppForm',
     props: {
-        values: Array,
+        currencies: Object,
+        startCurr: String,
     },
 
 }
@@ -10,9 +11,9 @@ export default {
 
 <template>
     <div class="d-flex py-1">
-        <input class="col-6 my-input text-center p-2 " type="text" name="" id="">
+        <input class="col-6 my-input text-center p-2 " type="number" name="" id="" value="0">
         <select class="col-6 my-select text-center p-2 " name="" id="">
-            <option value="">1</option>
+            <option v-for="(currency, index) in currencies" :key="index" :value="index" :selected="index === startCurr">{{currency}}</option>
         </select>
     </div>
 </template>

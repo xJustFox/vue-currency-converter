@@ -9,11 +9,18 @@ export default {
   },
   data() {
     return {
-      
+      currObj: {},
     }
   },
+  mounted() {
+    this.getCurrency()
+  },
   methods: {
-    
+    getCurrency(){
+      axios.get(`${store.apiUrl}/currencies`).then((response) => {
+        this.currObj = response.data;
+      })
+    }
   },
 }
 </script>
@@ -30,12 +37,9 @@ export default {
           <div class="fs-1">*cifra*</div>
         </div>
 
-        <AppForm></AppForm>
-        <AppForm></AppForm>
+        <AppForm :currencies="currObj" :startCurr="'EUR'"></AppForm>
 
-        <!-- <AppForm :values=""></AppForm> -->
-
-        <!-- <AppForm :values=""></AppForm> -->
+        <AppForm :currencies="currObj" :startCurr="'USD'"></AppForm>
 
         <div class="chart mt-3">
 
