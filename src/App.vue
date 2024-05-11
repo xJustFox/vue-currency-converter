@@ -31,10 +31,13 @@ export default {
         </div>
 
         <AppForm></AppForm>
-
         <AppForm></AppForm>
 
-        <div class="chart">
+        <!-- <AppForm :values=""></AppForm> -->
+
+        <!-- <AppForm :values=""></AppForm> -->
+
+        <div class="chart mt-3">
 
         </div>
       </div>
