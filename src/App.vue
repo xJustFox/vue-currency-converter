@@ -1,24 +1,22 @@
 <script>
-import { toValue } from 'vue';
 import AppForm from './components/AppForm.vue';
+import AppChart from './components/AppChart.vue';
 import { store } from './store.js';
 import axios from "axios";
 
 export default {
   components: {
     AppForm,
+    AppChart,
   },
   data() {
     return {
       store,
       currObj: {},
+      baseCurrency: 'EUR',
       baseAmount: 0,
-      baseCurrecy: '',
-      toCurrency: '',
+      toCurrency: 'USD',
       toAmount: 0,
-
-      firstCurrency: 'EUR',
-      secondCurrency: 'USD',
     }
   },
   mounted() {
@@ -48,10 +46,10 @@ export default {
     },
     // Converto la valuta reversata con i dati inseriti dall'utente
     getRevertConvValue() {
-      if (this.toAmount != 0) {
-        axios.get(`${store.apiUrl}/latest?amount=${this.toAmount}&from=${this.secondCurrency}&to=${this.firstCurrency}`).then((response) => {
+      if (this.toAmount > 0) {
+        axios.get(`${store.apiUrl}/latest?amount=${this.toAmount}&from=${this.toCurrency}&to=${this.baseCurrency}`).then((response) => {
           this.baseAmount = response.data.rates[Object.keys(response.data.rates)[0]].toFixed(2);
-          this.baseCurrecy = Object.keys(response.data.rates)[0];
+          this.baseCurrency = Object.keys(response.data.rates)[0];
           this.toCurrency = response.data.base;
           this.toAmount = response.data.amount.toFixed(2);
   
@@ -60,19 +58,19 @@ export default {
     },
     // Converto la valuta con i dati inseriti dall'utente
     getConvValue() {
-      axios.get(`${store.apiUrl}/latest?amount=${this.baseAmount}&from=${this.firstCurrency}&to=${this.secondCurrency}`).then((response) => {
+      axios.get(`${store.apiUrl}/latest?amount=${this.baseAmount}&from=${this.baseCurrency}&to=${this.toCurrency}`).then((response) => {
         this.baseAmount = response.data.amount.toFixed(2);
-        this.baseCurrecy = response.data.base;
+        this.baseCurrency = response.data.base;
         this.toCurrency = Object.keys(response.data.rates)[0];
         this.toAmount = response.data.rates[Object.keys(response.data.rates)[0]].toFixed(2)
       })
     },
     getFirstCurrency: function (currency) {
-      this.firstCurrency = currency;
+      this.baseCurrency = currency;
       this.store.firstCurrency = currency;
     },
     getSecondCurrency: function (currency) {
-      this.secondCurrency = currency;
+      this.toCurrency = currency;
       this.store.secondCurrency = currency;
     },
     getFirstValue: function (value) {
@@ -87,24 +85,24 @@ export default {
 
 <template>
   <main>
-    <div class="container-fluid d-flex justify-content-center align-items-center">
+    <div class="container-fluid py-4 d-flex justify-content-center align-items-center ">
       <div class="box p-3 text-light-green">
 
         <h1 class="text-center text-green py-1">CURRENCY BOOLVERTER</h1>
 
         <div>
-          <div>{{ `${baseAmount} ${baseCurrecy}` }} è uguale a</div>
+          <div>{{ `${baseAmount} ${baseCurrency}` }} è uguale a</div>
           <div class="fs-1">{{ `${toAmount} ${toCurrency}` }}</div>
         </div>
 
-        <AppForm :currencies="currObj" :startCurr="'EUR'" :valueCurr="Number(baseAmount)" @currency="getFirstCurrency"
+        <AppForm :currencies="currObj" :startCurr="baseCurrency" :valueCurr="Number(baseAmount)" @currency="getFirstCurrency"
           @value="getFirstValue"></AppForm>
 
-        <AppForm :currencies="currObj" :startCurr="'USD'" :valueCurr="Number(toAmount)" @currency="getSecondCurrency"
+        <AppForm :currencies="currObj" :startCurr="toCurrency" :valueCurr="Number(toAmount)" @currency="getSecondCurrency"
           @value="getSecondValue"></AppForm>
 
         <div class="chart mt-3">
-
+          <AppChart :baseCurr="baseCurrency" :toCurr="toCurrency"></AppChart>
         </div>
       </div>
     </div>
@@ -116,19 +114,16 @@ export default {
 @use './style/generals.scss' as *;
 
 .container-fluid {
-  height: 100vh;
-  overflow-y: auto;
+  min-height: 100vh;
 }
 
 .box {
-  min-width: 700px;
+  width: 800px;
   border: 2px solid $my_green;
   border-radius: 5px;
 }
 
 .chart {
-  width: 100%;
-  height: 300px;
-  background-color: blue;
+  max-width: 97%;
 }
 </style>
