@@ -27,7 +27,7 @@ export default {
 
 <template>
     <div class="d-flex py-1">
-        <input class="col-6 my-input text-center p-2 " type="number" min="0" step="0.01" :value="valueCurr" @keyup="sendValue($event.target.value)">
+        <input class="col-6 my-input text-center p-2 " type="number" min="0" step="0.01" :value="valueCurr" @change="sendValue($event.target.value)" @keyup="sendValue($event.target.value)">
         <select class="col-6 my-select text-center p-2 " @change="sendCurrency($event.target.value)">
             <option v-for="(currency, index) in currencies" :key="index" :value="index" :selected="index === startCurr" @click="sendCurrency(index)" :disabled="index == this.store.firstCurrency || index == this.store.secondCurrency">{{ currency }}</option>
         </select>
